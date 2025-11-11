@@ -15,20 +15,9 @@ from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # Import the custom classifier class
-# NOTE: The 'predict' module is assumed to be available
-try:
-    from predict import WasteClassifier
-except ImportError:
-    class WasteClassifier:
-        def __init__(self, model_path):
-            print(f"MOCK: Initializing mock WasteClassifier at {model_path}")
-            pass
-        def predict(self, filepath, topk=1):
-            # Simulate a result that requires app.py's classify_image to handle suggestions
-            # Added more fields to match expected structure
-            return {'prediction': 'Plastic', 'is_recyclable': True, 'confidence': 0.95}, {}
-    print("WARNING: Could not import WasteClassifier. Using mock implementation.")
-
+# --- Import WasteClassifier directly ---
+from predict import WasteClassifier
+print("✅ Successfully imported WasteClassifier from predict.py")
 
 # =================================================================
 # --- CONFIGURATION & INITIALIZATION ---
