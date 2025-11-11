@@ -1,0 +1,310 @@
+/* General Body and Container Styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #333; /* Dark background for the browser frame */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+/* Browser Frame Styling */
+.browser-frame {
+    background-color: #fff; /* White content area */
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    width: 90%; /* Adjust as needed */
+    max-width: 1200px; /* Max width of the content */
+    display: flex;
+    flex-direction: column;
+}
+
+.browser-header {
+    background-color: #e0e0e0;
+    padding: 8px 15px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+    height: 35px; /* Fixed height for browser header */
+    box-sizing: border-box;
+}
+
+.traffic-lights {
+    display: flex;
+    gap: 6px;
+    margin-right: 15px;
+}
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+.red { background-color: #ff5f56; }
+.yellow { background-color: #ffbd2e; }
+.green { background-color: #27c93f; }
+
+.browser-tab {
+    background-color: #f7f7f7;
+    border-radius: 5px 5px 0 0;
+    padding: 5px 15px;
+    display: flex;
+    align-items: center;
+    font-size: 0.9em;
+    color: #555;
+    position: relative;
+    top: 1px;
+}
+.browser-tab i {
+    margin-right: 8px;
+    color: #888;
+    font-size: 0.8em;
+}
+
+.browser-controls {
+    margin-left: auto;
+    display: flex;
+    gap: 15px;
+    color: #888;
+    font-size: 0.9em;
+}
+
+.browser-address-bar {
+    background-color: #f7f7f7;
+    padding: 8px 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #eee;
+    height: 40px; /* Fixed height for address bar */
+    box-sizing: border-box;
+}
+.browser-address-bar i {
+    color: #888;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+.address-box {
+    flex-grow: 1;
+    background-color: #e9e9e9;
+    border-radius: 20px;
+    padding: 5px 15px;
+    font-size: 0.85em;
+    color: #555;
+    text-align: center;
+}
+
+/* Main Header (Navigation) */
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    border-bottom: 1px solid #eee;
+    background-color: #fff;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #333;
+}
+.logo img {
+    height: 30px; /* Adjust logo size */
+    margin-right: 10px;
+}
+
+.main-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 25px;
+}
+.main-nav li a {
+    text-decoration: none;
+    color: #666;
+    font-weight: 500;
+    padding: 5px 0;
+    transition: color 0.3s ease;
+}
+.main-nav li a:hover {
+    color: #28a745; /* EcoScan green */
+}
+.main-nav li a.active, .main-nav li a.current-page {
+    color: #28a745; /* Active/current page highlight */
+    font-weight: bold;
+    border-bottom: 2px solid #28a745;
+}
+
+.menu-toggle { /* For mobile responsiveness, hidden on desktop */
+    display: none; 
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    color: #666;
+}
+
+/* Upload Page Content */
+.upload-page-content {
+    padding: 40px;
+    text-align: center;
+    background-color: #fcfcfc; /* Slightly off-white for the content area */
+    flex-grow: 1; /* Allows it to take remaining vertical space */
+}
+
+.upload-page-content h1 {
+    font-size: 2.2em;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.upload-page-content .subtitle {
+    font-size: 1.1em;
+    color: #666;
+    margin-bottom: 40px;
+}
+
+.upload-area {
+    border: 2px dashed #28a745; /* EcoScan green dashed border */
+    border-radius: 15px;
+    padding: 50px 30px;
+    max-width: 600px;
+    margin: 0 auto 30px auto; /* Center and add space below */
+    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.upload-icon-container {
+    position: relative;
+    font-size: 5em; /* Size of the camera icon */
+    color: #aaa;
+    margin-bottom: 10px;
+}
+
+.upload-icon-container .fa-camera {
+    z-index: 2;
+}
+
+.upload-icon-container .upload-recycle-icon {
+    position: absolute;
+    font-size: 0.4em; /* Smaller recycle icon */
+    right: 0;
+    bottom: 0;
+    color: #28a745; /* Green recycle icon */
+    z-index: 3;
+    transform: translate(20%, 20%); /* Slightly offset it */
+}
+
+.drag-drop-text {
+    font-size: 1.4em;
+    color: #555;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
+.or-separator {
+    font-size: 0.9em;
+    color: #888;
+    margin: 10px 0;
+}
+
+.snap-classify-btn {
+    background-color: #28a745; /* EcoScan green */
+    color: white;
+    padding: 15px 35px;
+    border: none;
+    border-radius: 30px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+}
+
+.snap-classify-btn:hover {
+    background-color: #218838; /* Darker green on hover */
+    transform: translateY(-2px);
+}
+
+/* Feedback Area */
+.feedback-area {
+    max-width: 600px;
+    margin: 20px auto 0 auto;
+    text-align: left;
+}
+
+.scanning-status, .success-message {
+    display: flex; /* Use flex to align icon and text */
+    align-items: center;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 1em;
+    margin-bottom: 10px;
+}
+
+.scanning-status {
+    background-color: #e0f2f7; /* Light blue for scanning */
+    color: #007bff;
+}
+.scanning-status i {
+    margin-right: 10px;
+    color: #007bff;
+}
+
+.success-message {
+    background-color: #d4edda; /* Light green for success */
+    color: #155724;
+}
+.success-message i {
+    margin-right: 10px;
+    color: #28a745;
+}
+
+.item-name {
+    font-weight: bold;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* Responsive adjustments (optional but recommended) */
+@media (max-width: 768px) {
+    .main-nav ul {
+        display: none; /* Hide desktop nav */
+    }
+    .menu-toggle {
+        display: block; /* Show hamburger icon */
+    }
+    .main-header {
+        padding: 15px 20px;
+    }
+    .upload-page-content {
+        padding: 20px;
+    }
+    .upload-area {
+        padding: 30px 15px;
+    }
+    .drag-drop-text {
+        font-size: 1.2em;
+    }
+    .browser-controls {
+        display: none; /* Hide some browser controls on small screens */
+    }
+    .address-box {
+        font-size: 0.75em;
+    }
+    .browser-frame {
+        width: 100%;
+        border-radius: 0;
+    }
+}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}About Us - PeerConnect{% endblock %}
+
+{% block content %}
+<section class="about-us max-w-5xl mx-auto p-8 bg-white shadow-xl rounded-lg">
+    <h1 class="text-4xl font-bold text-text-dark mb-6 text-center">Our Mission</h1>
+    <p class="text-lg text-text-light mb-8 text-center">PeerConnect is dedicated to leveraging technology to solve the global waste crisis. Our AI model provides instant, accurate waste classification to encourage better recycling habits at home and to help local communities manage their resources efficiently.</p>
+    
+    <h2 class="text-3xl font-semibold text-primary mb-4 border-b pb-2">The Technology</h2>
+    <p class="text-text-light mb-8">Our classification engine is built using a **ResNet18 convolutional neural network**, trained on thousands of images of common household waste items, achieving a final validation accuracy of over **91%**.</p>
+
+    <h2 class="text-3xl font-semibold text-primary mb-8 border-b pb-2">Our Team & Partners</h2>
+    
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <div class="team-member p-4 bg-neutral rounded-lg shadow-md">
+            <img src="{{ url_for('static', filename='images/team1.jpg') }}" alt="Alex Johnson" class="w-24 h-24 rounded-full mx-auto object-cover mb-3">
+            <h3 class="text-xl font-bold text-text-dark">Alex Johnson</h3>
+            <p class="text-sm text-secondary">Co-Founder</p>
+        </div>
+
+        <div class="team-member p-4 bg-neutral rounded-lg shadow-md">
+            <img src="{{ url_for('static', filename='images/team2.jpg') }}" alt="Rita Sharma" class="w-24 h-24 rounded-full mx-auto object-cover mb-3">
+            <h3 class="text-xl font-bold text-text-dark">Rita Sharma</h3>
+            <p class="text-sm text-secondary">AI Specialist</p>
+        </div>
+        
+        <div class="partner-member p-4 bg-neutral rounded-lg shadow-md">
+            <img src="{{ url_for('static', filename='images/partner1.jpg') }}" alt="Green Earth NGO" class="w-24 h-24 rounded-full mx-auto object-contain mb-3 border-2 border-primary">
+            <h3 class="text-xl font-bold text-text-dark">Green Earth NGO</h3>
+            <p class="text-sm text-text-light">Logistics Partner</p>
+        </div>
+
+        <div class="partner-member p-4 bg-neutral rounded-lg shadow-md">
+            <img src="{{ url_for('static', filename='images/partner2.jpg') }}" alt="Recycle-Tech" class="w-24 h-24 rounded-full mx-auto object-contain mb-3 border-2 border-primary">
+            <h3 class="text-xl font-bold text-text-dark">Recycle-Tech</h3>
+            <p class="text-sm text-text-light">Technology Partner</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

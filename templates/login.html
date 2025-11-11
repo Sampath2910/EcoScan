@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Log In - PeerConnect{% endblock %}
+
+{% block content %}
+<section class="login-container min-h-[70vh] flex items-center justify-center py-10">
+    <div class="login-card w-full max-w-md p-8 space-y-6 bg-white shadow-2xl rounded-xl border-t-4 border-primary">
+        
+        <h1 class="text-3xl font-bold text-center text-text-dark">Welcome Back</h1>
+        <p class="text-center text-text-light mb-6">Log in to continue your recycling journey.</p>
+
+        <!-- Form action remains 'login' to match the Flask route -->
+        <form action="{{ url_for('login') }}" method="POST" class="space-y-4"> 
+            
+            <!-- Email Field -->
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                <input type="email" id="email" name="email" required
+                       class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                       placeholder="your email address">
+            </div>
+
+            <!-- Password Field -->
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" id="password" name="password" required
+                       class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                       placeholder="••••••••">
+            </div>
+            
+            <!-- Submit Button -->
+            <button type="submit" 
+                    class="w-full py-3 bg-primary text-white font-semibold rounded-lg hover:bg-secondary transition duration-300 shadow-md">
+                Log In
+            </button>
+        </form>
+
+        <!-- Registration Link Splitter -->
+        <div class="text-center pt-4 border-t border-gray-100 space-y-3">
+            <p class="text-base font-semibold text-text-dark">Don't have an account?</p>
+            <a href="{{ url_for('register_user') }}" class="inline-block py-2 px-4 bg-green-500 text-white font-medium rounded-lg hover:bg-green-600 transition">Sign up as User</a>
+            <a href="{{ url_for('register_reclaimer') }}" class="inline-block py-2 px-4 bg-red-500 text-white font-medium rounded-lg hover:bg-red-600 transition ml-4">Sign up as Reclaimer</a>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

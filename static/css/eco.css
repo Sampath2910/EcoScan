@@ -1,0 +1,386 @@
+/* ======================================================= */
+/* 1. CSS Variables */
+/* ======================================================= */
+:root {
+    --primary: #10B981; /* Primary Green */
+    --secondary: #06B6D4; /* Secondary Teal/Blue */
+    --neutral: #f9fafb; /* Light Background */
+    --text-dark: #111827;
+    --text-light: #6b7280;
+    --border: #e5e7eb;
+    --radius: 12px;
+}
+
+/* ======================================================= */
+/* 2. Global Reset and Typography */
+/* ======================================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: 'Inter', Arial, sans-serif;
+    background: linear-gradient(135deg, #a8ed9b, #3cc767, #3cc767, #268b6b, #1d6e6a) !important;
+    background-size: cover;
+    min-height: 100vh;
+    color: var(--text-dark);
+    line-height: 1.6;
+    padding-top: 80px; /* Space for fixed navbar */
+}
+section, .content-container {
+    padding: 60px 5%;
+    max-width: 1200px;
+    margin: auto;
+}
+h1, h2, h3 {
+    margin: 0.5em 0;
+    color: var(--text-dark);
+}
+.subtitle {
+    color: var(--text-light);
+    margin-bottom: 20px;
+}
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ======================================================= */
+/* 3. Navbar */
+/* ======================================================= */
+.main-nav, .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 5%;
+    height: 80px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: fixed; 
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+.main-nav .logo a, .logo-container .logo {
+    font-weight: bold;
+    font-size: 1.4rem;
+    color: var(--primary);
+    text-decoration: none;
+}
+.nav-links {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    gap: 25px;
+}
+.nav-links li a {
+    text-decoration: none;
+    color: var(--text-light);
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+.nav-links li a:hover {
+    background-color: #D1FAE5;
+    color: var(--primary);
+}
+
+/* Hamburger for mobile */
+.hamburger { display: none; }
+@media (max-width: 768px) {
+    .hamburger {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        cursor: pointer;
+        order: 2;
+    }
+    .hamburger div {
+        width: 25px;
+        height: 3px;
+        background-color: #333;
+        transition: all 0.3s ease;
+    }
+}
+
+/* ======================================================= */
+/* 4. Footer */
+/* ======================================================= */
+footer {
+    text-align: center;
+    padding: 1rem;
+    background: var(--primary);
+    color: white;
+    width: 100%;
+}
+
+/* ======================================================= */
+/* 5. CTA Buttons */
+/* ======================================================= */
+.cta-button, .btn {
+    display: inline-block;
+    background-color: var(--primary);
+    color: #fff;
+    padding: 12px 25px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    border: none;
+    cursor: pointer;
+}
+.cta-button:hover, .btn:hover {
+    background-color: #059669; 
+}
+.btn-secondary {
+    background-color: var(--secondary);
+}
+.btn-secondary:hover {
+    background-color: #0891B2;
+}
+
+/* ======================================================= */
+/* 6. Home and Feature Cards */
+/* ======================================================= */
+.hero {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: var(--radius);
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+.hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+.features {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.feature-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    flex: 1 1 300px;
+    text-align: center;
+    transition: transform 0.2s;
+    border-top: 4px solid var(--primary);
+}
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* ======================================================= */
+/* 7. Upload and Results */
+/* ======================================================= */
+.upload-area {
+    background: white;
+    padding: 2rem;
+    border-radius: var(--radius);
+    text-align: center;
+    max-width: 600px;
+    margin: 40px auto;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.upload-area input[type="file"], .upload-area button {
+    margin-top: 1rem;
+    display: block;
+    width: 100%;
+}
+.result-box {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border-radius: var(--radius);
+    font-weight: bold;
+    text-align: left;
+}
+.hidden { display: none; }
+
+/* ======================================================= */
+/* 8. Dashboard and Metrics */
+/* ======================================================= */
+.dashboard-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+.dashboard-cards .card {
+    background-color: #fff;
+    padding: 25px;
+    flex: 1 1 200px;
+    border-radius: var(--radius);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+    border-bottom: 3px solid var(--secondary);
+    text-align: center;
+}
+.dashboard-cards .card p {
+    font-size: 2em;
+    font-weight: bold;
+    color: var(--primary);
+}
+
+/* ======================================================= */
+/* 9. Login and Signup Forms */
+/* ======================================================= */
+.login-container, .signup-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+}
+.login-card, .signup-card {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+}
+.login-card h2, .signup-card h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+.login-card .subtitle, .signup-card .subtitle {
+    color: #64748b;
+    margin-bottom: 1.5rem;
+}
+.login-card form, .signup-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.login-card input, .signup-card input {
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    outline: none;
+}
+.login-card button {
+    background: #16a34a;
+}
+.signup-card button {
+    background: #2563eb;
+}
+.login-card button, .signup-card button {
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+.login-card button:hover { background: #15803d; }
+.signup-card button:hover { background: #1d4ed8; }
+.switch {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+.switch a {
+    font-weight: 600;
+}
+.login-card .switch a { color: #16a34a; }
+.signup-card .switch a { color: #2563eb; }
+
+/* ======================================================= */
+/* 10. Directory and Filters */
+/* ======================================================= */
+.directory-filters {
+    background-color: #fff;
+    padding: 20px 30px;
+    border-radius: var(--radius);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-end;
+    margin-bottom: 30px;
+}
+.directory-filters h2 {
+    width: 100%;
+    margin-bottom: 0;
+    color: var(--primary);
+}
+.directory-filters label {
+    display: flex;
+    flex-direction: column;
+    font-weight: 500;
+    color: var(--text-dark);
+}
+.directory-filters select, .directory-filters input {
+    margin-top: 5px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    outline: none;
+    min-width: 180px;
+}
+.directory-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    list-style: none;
+    padding: 0;
+}
+.directory-list li {
+    background-color: #fff;
+    padding: 15px 20px;
+    border-radius: var(--radius);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 5px solid var(--secondary);
+}
+.directory-list li h4 { margin: 0 0 5px 0; color: var(--secondary); }
+#map { width: 100%; height: 400px; border-radius: var(--radius); }
+
+/* ======================================================= */
+/* 11. Flash Messages */
+/* ======================================================= */
+.flash-messages-container {
+    position: fixed;
+    top: 90px;
+    right: 20px;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.flash-message {
+    padding: 12px 20px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    animation: fadeIn 0.5s, fadeOut 0.5s 4s;
+    opacity: 0.95;
+}
+.flash-success { background-color: #16a34a; }
+.flash-error { background-color: #dc2626; }
+.flash-info { background-color: #2563eb; }
+@keyframes fadeIn { from {opacity: 0; transform: translateY(-10px);} to {opacity: 0.95; transform: translateY(0);} }
+@keyframes fadeOut { from {opacity: 0.95;} to {opacity: 0; transform: translateY(-10px);} }
+
+/* ======================================================= */
+/* 12. About Page - Team & Partners Section */
+/* ======================================================= */
+.team-member img,
+.partner-member img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: #fff
+}

@@ -1,0 +1,92 @@
+/* -------------------------------------------------------------------
+   DEDICATED STYLES FOR UPLOAD.HTML
+   These styles override base.html background and manage layout.
+------------------------------------------------------------------- */
+
+/* 1. Override the body and main backgrounds to allow the wrapper to show through */
+body {
+    /* Set the body background to transparent to ensure the wrapper's gradient is visible */
+    background-color: transparent !important; 
+}
+
+main {
+    /* Remove default margin from base.html to allow the content to go edge-to-edge vertically */
+    margin-top: 0 !important;
+    /* Ensure the main area expands vertically */
+    min-height: 100vh;
+}
+
+/* 2. The specific gradient and centering logic is applied to the wrapper */
+.upload-page-wrapper {
+    /* Make the wrapper take full width/height of the main area */
+    width: 100%;
+    min-height: 100%;
+    
+    /* *** MODIFICATION: Removed the redundant gradient and set to transparent *** */
+    background: transparent !important; 
+    
+    /* Center the content vertically (using flex-start to keep the card near the top) */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 50px; /* Space between the header and the white card */
+    padding-bottom: 50px; 
+}
+
+
+/* -------------------------------------------------------------------
+   COMPONENT STYLES (for the white card and specific elements)
+------------------------------------------------------------------- */
+
+.content-container {
+    background-color: #ffffff;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    border-radius: 1rem;
+    padding: 3rem; 
+    max-width: 600px; 
+    width: 90%; 
+}
+
+/* --- Form and Button Styles --- */
+#submitBtn {
+    background-color: #2d3748; 
+    font-size: 1.25rem;
+    padding: 1rem 3rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    color: white; 
+    border-radius: 0.5rem; /* Added border-radius here */
+}
+#submitBtn:hover {
+    background-color: #1a202c; 
+}
+
+.result-box {
+    border: 2px solid #3cc767;
+    padding: 1.5rem;
+    border-radius: 0.5rem; /* Added border-radius here */
+}
+
+/* --- Centered Upload Content Styling --- */
+.centered-upload-content {
+    display: flex;
+    flex-direction: column; 
+    align-items: center; 
+    gap: 2.5rem; 
+}
+
+/* --- Recyclers Button Style --- */
+.recyclers-button {
+    background-color: #3cc767; 
+    color: white;
+    font-weight: bold;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 15px;
+    transition: background-color 0.3s ease;
+}
+.recyclers-button:hover {
+    background-color: #268b6b;
+}

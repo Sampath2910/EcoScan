@@ -1,0 +1,58 @@
+<nav class="main-nav flex items-center justify-between p-4 md:p-6 bg-white shadow-md">
+    
+    <!-- LOGO AREA: Corrected file extension to .png -->
+    <div class="logo flex items-center space-x-2">
+        <!-- Assuming the logo image is correctly placed at static/uploads/peerconnect-logo.png -->
+        <img src="{{ url_for('static', filename='uploads/peerconnect-logo.png') }}" 
+             alt="EcoScan Logo" 
+             class="h-8 w-auto">
+        
+        <a href="{{ url_for('index') }}" class="text-2xl font-black text-primary hover:text-secondary transition-colors">EcoScan</a>
+    </div>
+
+    <!-- Hamburger Button (for mobile) -->
+    <button class="hamburger lg:hidden block">
+        <div class="w-6 h-0.5 bg-text-dark my-1"></div>
+        <div class="w-6 h-0.5 bg-text-dark my-1"></div>
+        <div class="w-6 h-0.5 bg-text-dark my-1"></div>
+    </button>
+
+    <!-- Navigation Links: space-x-4 (reduced gap) and font-bold (highlighted) -->
+    <ul class="nav-links hidden lg:flex space-x-4 text-text-dark text-lg font-bold items-center">
+        
+        <li><a href="{{ url_for('index') }}" class="hover:text-primary transition-colors">Home</a></li>
+        
+        {% if user_is_authenticated %}
+            {% if user_role == 'user' %}
+                
+                <!-- Fixed "Upload Waste" to be on one line -->
+                <li><a href="{{ url_for('upload_file') }}" class="hover:text-primary transition-colors whitespace-nowrap">Upload Waste</a></li>
+                <li><a href="{{ url_for('dashboard') }}" class="hover:text-primary transition-colors">Dashboard</a></li>
+                <li><a href="{{ url_for('directory') }}" class="hover:text-primary transition-colors">Recyclers</a></li>
+                
+                <li><a href="{{ url_for('about') }}" class="hover:text-primary transition-colors">About</a></li>
+                <li><a href="{{ url_for('contact') }}" class="hover:text-primary transition-colors">Contact</a></li>
+
+            {% elif user_role == 'reclaimer' %}
+                
+                <li><a href="{{ url_for('reclaimer_page') }}" class="text-red-500 hover:text-red-600 transition-colors font-bold">Reclaimer Portal</a></li>
+                <li><a href="{{ url_for('about') }}" class="hover:text-primary transition-colors">About</a></li>
+                <li><a href="{{ url_for('contact') }}" class="hover:text-primary transition-colors">Contact</a></li>
+
+            {% endif %}
+            
+            <!-- Logout Button: bg-gray-200 (light color) and text-gray-700 -->
+            <li><a href="{{ url_for('logout') }}" 
+                   class="text-gray-700 bg-gray-200 hover:bg-gray-300 
+                          px-4 py-2 rounded-lg transition-colors font-bold whitespace-nowrap">
+                Logout ({{ username }})
+            </a></li>
+
+        {% else %}
+            <li><a href="{{ url_for('about') }}" class="hover:text-primary transition-colors">About</a></li>
+            <li><a href="{{ url_for('contact') }}" class="hover:text-primary transition-colors">Contact</a></li>
+            <!-- Login Button remains primary green as it is a major action for guests -->
+            <li><a href="/login" class="text-white bg-primary hover:bg-secondary px-4 py-2 rounded-lg transition-colors font-bold">Login / Sign Up</a></li>
+        {% endif %}
+    </ul>
+</nav>

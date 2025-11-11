@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}User Sign Up - PeerConnect{% endblock %}
+
+{% block content %}
+<section class="register-container min-h-[80vh] flex items-center justify-center py-10">
+    <div class="register-card w-full max-w-lg p-8 space-y-6 bg-white shadow-2xl rounded-xl border-t-4 border-primary">
+        
+        <h1 class="text-3xl font-bold text-center text-text-dark">Create User Account</h1>
+        <p class="text-center text-text-light">Start your green journey by signing up!</p>
+
+        <form action="{{ url_for('register_user') }}" method="POST" class="space-y-4">
+            
+            <!-- Name -->
+            <div>
+                <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                <input type="text" id="name" name="name" required
+                       class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+            </div>
+
+            <!-- Email & Phone (Grid Layout) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" id="email" name="email" required
+                           class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+                </div>
+                <div>
+                    <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" required
+                           class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+                </div>
+            </div>
+
+            <!-- Password -->
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" id="password" name="password" required
+                       class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+            </div>
+
+            <!-- Address (Long Text) -->
+            <div>
+                <label for="address" class="block text-sm font-medium text-gray-700">Street Address / Locality</label>
+                <textarea id="address" name="address" rows="2" required
+                          class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"></textarea>
+            </div>
+            
+            <!-- Village & Pincode (Grid Layout) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="village" class="block text-sm font-medium text-gray-700">Village / Town</label>
+                    <input type="text" id="village" name="village" required
+                           class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+                </div>
+                <div>
+                    <label for="pincode" class="block text-sm font-medium text-gray-700">Pincode</label>
+                    <input type="text" id="pincode" name="pincode" required
+                           class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+                </div>
+            </div>
+
+            <!-- Submit Button with Gradient Styling -->
+            <button type="submit" 
+                    class="w-full py-3 
+                           bg-gradient-to-r from-green-500 to-green-600 
+                           text-white font-semibold rounded-lg 
+                           hover:from-green-600 hover:to-green-700 
+                           transition duration-300 shadow-xl mt-6">
+                Register as User
+            </button>
+        </form>
+
+        <div class="text-center pt-4 border-t border-gray-100">
+            <p class="text-sm text-text-light">
+                Already have an account? 
+                <a href="{{ url_for('login') }}" class="font-semibold text-primary hover:text-secondary">Log In</a>
+            </p>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

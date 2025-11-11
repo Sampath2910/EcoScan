@@ -1,0 +1,189 @@
+/* ==============================================
+   1. CONTENT WRAPPER STYLES
+   ============================================== */
+/* This style block targets the main content area where the centered content lives. */
+/* ==============================================
+   1. CONTENT WRAPPER STYLES (Light Background)
+   ============================================== */
+/* Remove base.html margins/paddings that conflict */
+main.mt-6 {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+
+.upload-page-content-wrapper {
+    /* *** MODIFICATION: Set to transparent to allow the global body gradient to show *** */
+    background-color: transparent; 
+    
+    display: flex;
+    justify-content: center; /* Center the white content box horizontally */
+    align-items: flex-start; /* Align the content box toward the top */
+    min-height: calc(100vh - 70px); /* Fill the rest of the viewport below the navbar */
+    padding: 40px 20px; /* Add padding inside the light gray area */
+    box-sizing: border-box;
+}
+
+/* ==============================================
+   2. UPLOAD CONTENT CONTAINER (The white box)
+   ============================================== */
+.upload-page-content {
+    /* Styles for the white content box */
+    padding: 40px; 
+    text-align: center;
+    background-color: #fff; /* White background */
+    border-radius: 8px; /* Rounded corners */
+    /* CHANGED: Reduced shadow for a cleaner, less heavy look against a light background */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
+    max-width: 950px; 
+    width: 90%;
+}
+
+/* The rest of the CSS (Upload area, buttons, success message) remains the same. */
+/* ==============================================
+   3. UPLOAD AREA STYLES (Dashed Box)
+   ============================================== */
+.upload-page-content h1 {
+    font-size: 2.2em;
+    color: #333; 
+    margin-bottom: 10px;
+}
+
+.upload-page-content .subtitle {
+    font-size: 1.1em;
+    color: #666;
+    margin-bottom: 40px;
+}
+
+.upload-area {
+    border: 2px dashed #28a745; 
+    border-radius: 15px;
+    padding: 50px 30px;
+    max-width: 500px; 
+    margin: 0 auto 30px auto; 
+    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.upload-icon-container {
+    position: relative;
+    font-size: 5em; 
+    color: #aaa;
+    margin-bottom: 10px;
+}
+
+.upload-icon-container .fa-camera {
+    z-index: 2;
+}
+
+.upload-icon-container .upload-recycle-icon {
+    position: absolute;
+    font-size: 0.4em; 
+    right: 0;
+    bottom: 0;
+    color: #28a745; 
+    z-index: 3;
+    transform: translate(20%, 20%); 
+}
+
+.drag-drop-text {
+    font-size: 1.4em;
+    color: #555;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
+.or-separator {
+    font-size: 0.9em;
+    color: #888;
+    margin: 10px 0;
+}
+
+.snap-classify-btn {
+    background-color: #28a745; 
+    color: white;
+    padding: 15px 35px;
+    border: none;
+    border-radius: 30px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+    text-transform: uppercase;
+    width: 100%; 
+}
+.snap-classify-btn:hover {
+    background-color: #218838; 
+    transform: translateY(-2px);
+}
+
+/* ==============================================
+   4. FEEDBACK & BUTTON STYLES (Big Success Box)
+   ============================================== */
+.feedback-area {
+    max-width: 500px;
+    margin: 20px auto 0 auto;
+    text-align: left;
+}
+
+.scanning-status, .success-message, .error-message {
+    display: flex; 
+    align-items: center;
+    padding: 15px 25px; 
+    border-radius: 10px; 
+    font-size: 1.15em; 
+    font-weight: bold; 
+    margin-bottom: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+}
+
+.scanning-status {
+    background-color: #e0f2f7; 
+    color: #007bff;
+}
+.scanning-status i {
+    margin-right: 12px; 
+    color: #007bff;
+}
+
+.success-message {
+    background-color: #d4edda; 
+    color: #155724;
+    border: 1px solid #28a745; 
+}
+.success-message i {
+    margin-right: 12px;
+    color: #28a745;
+}
+
+.item-name {
+    font-weight: bold;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.recyclers-button {
+    background-color: #06B6D4; 
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 30px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(6, 182, 212, 0.3);
+    margin-top: 30px; 
+    text-decoration: none; 
+    display: inline-flex; 
+    align-items: center;
+    gap: 10px; 
+}
+.recyclers-button:hover {
+    background-color: #0891B2; 
+    transform: translateY(-2px);
+}

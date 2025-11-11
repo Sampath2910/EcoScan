@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PeerConnect | {% block title %}{% endblock %}</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font family -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Configuration for Inter font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <!-- Navigation Bar -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <a href="{{ url_for('index') }}" class="flex-shrink-0 flex items-center">
+                    <i class="fas fa-recycle text-3xl text-green-600 mr-2"></i>
+                    <span class="text-2xl font-bold text-gray-800">PeerConnect</span>
+                </a>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-4">
+                    <a href="{{ url_for('index') }}" class="text-gray-600 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition duration-150">Home</a>
+                    {% if user_is_authenticated %}
+                        <a href="{{ url_for('upload_file') }}" class="text-gray-600 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition duration-150">Classify Waste</a>
+                        <a href="{{ url_for('dashboard') }}" class="text-gray-600 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition duration-150">Dashboard</a>
+                        <a href="{{ url_for('directory') }}" class="text-gray-600 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition duration-150">Recycler Map</a>
+                        {% if user_role == 'reclaimer' %}
+                            <a href="{{ url_for('reclaimer_page') }}" class="text-yellow-600 bg-yellow-100 hover:bg-yellow-200 px-3 py-2 rounded-md text-sm font-medium transition duration-150">Reclaimer Portal</a>
+                        {% endif %}
+                        <a href="{{ url_for('logout') }}" class="text-white bg-red-500 hover:bg-red-600 px-3 py-2 rounded-md text-sm font-medium transition duration-150">Logout</a>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="text-gray-600 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition duration-150">Login</a>
+                        <a href="{{ url_for('register_user') }}" class="text-white bg-green-600 hover:bg-green-700 px-3 py-2 rounded-md text-sm font-medium transition duration-150">Register</a>
+                    {% endif %}
+                </div>
+                
+                <!-- User/Guest indicator -->
+                <div class="hidden md:block">
+                    <span class="text-sm font-medium text-gray-500">
+                        <i class="fas fa-user-circle mr-1"></i> {{ username }} ({{ user_role | capitalize }})
+                    </span>
+                </div>
+
+                <!-- Mobile Menu Button (Hamburger) -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-green-500">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t border-gray-100 shadow-lg">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="{{ url_for('index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-green-50 hover:text-green-700 transition duration-150">Home</a>
+                {% if user_is_authenticated %}
+                    <a href="{{ url_for('upload_file') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-green-50 hover:text-green-700 transition duration-150">Classify Waste</a>
+                    <a href="{{ url_for('dashboard') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-green-50 hover:text-green-700 transition duration-150">Dashboard</a>
+                    <a href="{{ url_for('directory') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-green-50 hover:text-green-700 transition duration-150">Recycler Map</a>
+                    {% if user_role == 'reclaimer' %}
+                        <a href="{{ url_for('reclaimer_page') }}" class="block px-3 py-2 rounded-md text-base font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 transition duration-150">Reclaimer Portal</a>
+                    {% endif %}
+                    <a href="{{ url_for('logout') }}" class="block px-3 py-2 rounded-md text-base font-medium text-white bg-red-500 hover:bg-red-600 transition duration-150">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-green-50 hover:text-green-700 transition duration-150">Login</a>
+                    <a href="{{ url_for('register_user') }}" class="block px-3 py-2 rounded-md text-base font-medium text-white bg-green-600 hover:bg-green-700 transition duration-150">Register</a>
+                {% endif %}
+                <div class="px-3 py-2">
+                     <span class="text-sm font-medium text-gray-500">
+                        <i class="fas fa-user-circle mr-1"></i> {{ username }} ({{ user_role | capitalize }})
+                    </span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Flash Messages Container -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 w-full">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="rounded-lg p-4 mb-3 text-sm
+                        {% if category == 'success' %} bg-green-100 text-green-700 border border-green-200
+                        {% elif category == 'error' %} bg-red-100 text-red-700 border border-red-200
+                        {% elif category == 'info' %} bg-blue-100 text-blue-700 border border-blue-200
+                        {% else %} bg-gray-100 text-gray-700 border border-gray-200
+                        {% endif %}"
+                        role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content Block -->
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-100 mt-auto">
+        <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center text-gray-500 text-sm">
+            &copy; {{ current_year }} PeerConnect. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- Firebase SDK Imports and Initialization -->
+    <script type="module">
+        // Inject global variables from Flask context processor
+        const appId = "{{ app_id | safe }}";
+        const firebaseConfigString = "{{ firebase_config | safe }}";
+        const initialAuthToken = "{{ initial_auth_token | safe }}";
+        const firebaseConfig = firebaseConfigString ? JSON.parse(firebaseConfigString) : {};
+        
+        // Firebase Imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, where, getDocs, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        // Globals (accessible from the window object for app-wide use)
+        window.db = null;
+        window.auth = null;
+        window.app = null;
+        window.userId = null;
+        window.appId = appId; // Global access to the app ID
+
+        async function initFirebase() {
+            try {
+                // setLogLevel('debug'); // Uncomment to debug Firebase issues
+                
+                // Initialize App
+                if (Object.keys(firebaseConfig).length > 0) {
+                    window.app = initializeApp(firebaseConfig);
+                    window.db = getFirestore(window.app);
+                    window.auth = getAuth(window.app);
+
+                    // Handle Authentication
+                    if (initialAuthToken) {
+                        await signInWithCustomToken(window.auth, initialAuthToken);
+                        console.log("Firebase: Signed in with custom token.");
+                    } else {
+                        await signInAnonymously(window.auth);
+                        console.log("Firebase: Signed in anonymously.");
+                    }
+
+                    // Set up Auth State Listener and populate userId
+                    onAuthStateChanged(window.auth, (user) => {
+                        if (user) {
+                            window.userId = user.uid;
+                            console.log("Firebase: User UID set:", window.userId);
+                            // Dispatch a custom event to notify other scripts that auth is ready
+                            document.dispatchEvent(new CustomEvent('firebaseAuthReady'));
+                        } else {
+                            // If the user logs out, assign a temporary UUID for guest actions
+                            window.userId = crypto.randomUUID();
+                            console.log("Firebase: Anonymous user ID set:", window.userId);
+                            document.dispatchEvent(new CustomEvent('firebaseAuthReady'));
+                        }
+                    });
+
+                } else {
+                    console.warn("Firebase: Configuration is missing or empty. Database features will be disabled.");
+                }
+
+            } catch (error) {
+                console.error("Firebase Initialization Error:", error);
+            }
+        }
+        
+        // Start initialization
+        initFirebase();
+
+        // Mobile Menu Toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', () => {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>

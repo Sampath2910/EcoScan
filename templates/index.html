@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block title %}Home - PeerConnect{% endblock %}
+
+{% block content %}
+<style>
+/* ===================================================
+    AGGRESSIVE FIXES FOR LAYOUT & VISUAL STYLING
+    ===================================================
+*/
+
+/* --- VISUAL STYLES (Page Background & Global) --- */
+/* The BODY gradient rule was removed from here and moved to eco.css */
+main {
+    background-color: transparent !important;
+}
+header.bg-white {
+    background-color: white !important;
+}
+
+/* --- 1. HERO SECTION (The Unified Top Frame) --- */
+.hero-new {
+    background-color: #ffffff; 
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    margin-bottom: 3rem; 
+}
+.hero-row {
+    display: flex;
+    flex-direction: row; 
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 0;
+}
+.hero-row .text-content {
+    flex: 0 0 50%; 
+    max-width: 50%; 
+    padding-right: 2rem;
+}
+.hero-row .image-content {
+    flex: 0 0 45%; 
+}
+.hero-row .image-content img {
+    width: 100%;
+    max-height: 400px; 
+    object-fit: contain; 
+}
+.hero-new .text-content h1 {
+    font-size: 3.5rem;
+    color: #1a202c;
+    margin-bottom: 1rem;
+}
+.hero-new .text-content p {
+    font-size: 1rem;
+    color: #4a5568;
+    margin-bottom: 1.5rem;
+}
+
+/* --- Button Styling Changes --- */
+.hero-new .cta-button {
+    /* 1. INCREASED SIZE */
+    font-size: 1.25rem; 
+    padding: 1rem 3rem; 
+    /* 2. REMOVED OLD COLOR AND APPLIED NEW COLOR */
+    background-color: #3cc767 !important; /* New vibrant green color */
+    color: white !important;
+    font-weight: bold;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+}
+.hero-new .cta-button:hover {
+    background-color: #268b6b !important;
+}
+
+
+/* --- 2. HOW IT WORKS SECTION (Full Descriptive Steps) --- */
+.how-it-works-section {
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 1rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+.steps-grid {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    margin-top: 2rem;
+    margin-bottom: 2rem; /* Space before the new button */
+}
+.step-card {
+    flex: 1;
+    text-align: center;
+}
+.step-card img {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 15px;
+    display: block;
+}
+.step-card h3 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #3cc767;
+    margin-bottom: 10px;
+}
+.step-card p {
+    font-size: 1rem;
+    color: #4a5568;
+}
+
+/* New Button Style for How It Works Section */
+.learn-more-button {
+    text-decoration: none;
+    color: #3cc767;
+    background-color: transparent;
+    border: 2px solid #3cc767;
+    padding: 0.75rem 2rem;
+    border-radius: 0.5rem;
+    font-weight: bold;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+.learn-more-button:hover {
+    background-color: #3cc767;
+    color: white;
+}
+</style>
+
+<section class="hero-new max-w-6xl mx-auto">
+    
+    <div class="hero-row"> 
+        
+        <div class="text-content">
+            <h1 class="text-6xl font-extrabold text-text-dark mb-4">RECYCLE</h1>
+            
+            <p class="text-lg text-text-light max-w-lg mb-8">
+                ReClaimers is dedicated to leveraging technology to solve the global waste crisis. Use EcoScan to instantly classify waste materials using a PyTorch ResNet model, helping you sort smarter and recycle more efficiently.
+            </p>
+            
+            <a href="{{ url_for('upload_file') }}" class="cta-button">Try EcoScan Now</a>
+        </div>
+
+        <div class="image-content">
+            <img 
+                src="{{ url_for('static', filename='uploads/hero_recycling.png') }}" 
+                alt="Illustration of a person recycling into a green trash can" 
+                class="w-full h-auto object-contain rounded-lg shadow-xl">
+        </div>
+    </div>
+</section>
+
+
+<section class="how-it-works-section max-w-6xl mx-auto">
+    <h2 class="text-4xl font-bold text-text-dark mb-8">How It Works</h2>
+    
+    <div class="steps-grid">
+        <div class="step-card">
+            <img src="{{ url_for('static', filename='uploads/step1_upload.png') }}" alt="Upload Icon">
+            <h3>1. Snap & Upload</h3>
+            <p>Take a clear photo of your waste item using your phone or camera to start the classification process.</p>
+        </div>
+
+        <div class="step-card">
+            <img src="{{ url_for('static', filename='uploads/step2_ai.png') }}" alt="AI Classify Icon">
+            <h3>2. AI Classifies</h3>
+            <p>Our PyTorch ResNet model instantly analyzes the image and identifies the waste type for accurate sorting.</p>
+        </div>
+
+        <div class="step-card">
+            <img src="{{ url_for('static', filename='uploads/waste.png') }}" alt="Recycle Icon">
+            <h3>3. Recycle Smart</h3>
+            <p>Receive disposal suggestions and find a local recycler near you to ensure efficient and proper recycling.</p>
+        </div>
+    </div>
+    
+    <a href="{{ url_for('about') }}" class="learn-more-button">Learn More</a>
+</section>
+{% endblock %}
