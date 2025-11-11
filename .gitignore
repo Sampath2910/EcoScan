@@ -1,0 +1,21 @@
+# Ignore virtual environments
+venv/
+.venv/
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore local database and uploads
+*.db
+uploads/
+static/uploads/
+
+# Ignore large model files (optional but recommended)
+*.pt
+*.pth
+
+# Ignore system files
+.DS_Store
+Thumbs.db
