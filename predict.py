@@ -55,43 +55,92 @@ class WasteClassifier:
         self.transform = self._get_transforms()
 
     def _download_model_from_drive(self, url):
-        """Downloads model weights from Google Drive if not available locally."""
+        """Downloads model weights from Google Drive (returns a model instance)."""
         print("🌐 Downloading model from Google Drive (direct)...")
-        response = requests.get(url)
+        response = requests.get(url, stream=True, timeout=60)
         response.raise_for_status()
         model_data = BytesIO(response.content)
+        # Build model architecture
         model = models.resnet18(pretrained=False)
         num_ftrs = model.fc.in_features
         model.fc = nn.Linear(num_ftrs, len(self.class_names))
-        state_dict = torch.load(self.model_path, map_location=self.device, weights_only=False)
-        model.load_state_dict(state_dict)
+
+        # Try to load the file from BytesIO with explicit weights_only=False for PyTorch >=2.6
+        try:
+            state_or_model = torch.load(model_data, map_location=self.device, weights_only=False)
+        except TypeError:
+            # Older torch versions may not accept weights_only parameter
+            try:
+                state_or_model = torch.load(model_data, map_location=self.device)
+            except Exception as e:
+                raise RuntimeError(f"Failed to torch.load BytesIO: {e}")
+        except Exception as e:
+            raise RuntimeError(f"Failed to torch.load BytesIO: {e}")
+
+        # If the downloaded object is a state_dict -> load_state_dict
+        if isinstance(state_or_model, dict):
+            model.load_state_dict(state_or_model)
+        else:
+            # Assume it is a full model object (less ideal) -> try to extract state_dict or load direct
+            try:
+                model.load_state_dict(state_or_model.state_dict())
+            except Exception:
+                # Attempt to use it as model directly
+                model = state_or_model
+
         model.to(self.device)
         model.eval()
-        print("✅ Model downloaded and loaded successfully.")
+        print("✅ Model downloaded and loaded successfully (from Drive).")
         return model
+
 
     def _load_model(self):
         """Loads model locally or from cloud depending on environment."""
         try:
-            # Check if running on Render
+            # If running on Render and local cache doesn't exist, use direct download
             if os.getenv("RENDER", "false") == "true" and not os.path.exists(self.model_path):
                 MODEL_URL = self.drive_url
                 return self._download_model_from_drive(MODEL_URL)
+
+            print(f"📂 Loading local model from {self.model_path}")
+            # Create architecture
+            model = models.resnet18(pretrained=False)
+            num_ftrs = model.fc.in_features
+            model.fc = nn.Linear(num_ftrs, len(self.class_names))
+
+            # Try loading with explicit weights_only=False (PyTorch >=2.6)
+            try:
+                state_or_model = torch.load(self.model_path, map_location=self.device, weights_only=False)
+            except TypeError:
+                # Older PyTorch versions: no weights_only argument
+                state_or_model = torch.load(self.model_path, map_location=self.device)
+            except Exception as e:
+                # Re-raise with context so logs are clear
+                raise RuntimeError(f"torch.load failed: {e}")
+
+            # If we got a dict, assume it's a state_dict
+            if isinstance(state_or_model, dict):
+                model.load_state_dict(state_or_model)
             else:
-                print(f"📂 Loading local model from {self.model_path}")
-                model = models.resnet18(pretrained=False)
-                num_ftrs = model.fc.in_features
-                model.fc = nn.Linear(num_ftrs, len(self.class_names))
-                state_dict = torch.load(self.model_path, map_location=self.device)
-                model.load_state_dict(state_dict)
-                model.to(self.device)
-                model.eval()
-                print("✅ Model loaded successfully (local).")
-                return model
+                # If it's a full model object, try to load its state_dict; otherwise use it directly
+                try:
+                    model.load_state_dict(state_or_model if isinstance(state_or_model, dict) else state_or_model.state_dict())
+                except Exception:
+                    model = state_or_model
+
+            model.to(self.device)
+            model.eval()
+            print("✅ Model loaded successfully (local).")
+            return model
 
         except Exception as e:
+            # Preserve the original exception text (useful to debug)
             print(f"❌ Failed to load model: {e}")
+            # log traceback to Render logs
+            import traceback as _tb
+            _tb.print_exc()
             return None
+
 
     def _get_transforms(self):
         """Defines the image transformations for the ResNet model."""
