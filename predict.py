@@ -13,19 +13,50 @@ class WasteClassifier:
     """
     Initializes and manages the PyTorch ResNet18 model for waste classification.
     """
+
     def __init__(self, model_path='waste_classifier.pt'):
         self.class_names = ['cardboard', 'glass', 'metal', 'paper', 'plastic', 'trash']
         self.recyclable_classes = ['cardboard', 'glass', 'metal', 'paper', 'plastic']
 
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.model_path = model_path
 
-        self.model = self._load_model()
+        # Define a cache directory (works for Render persistent disk)
+        self.cache_dir = "/opt/render/project/src/model_cache"
+        os.makedirs(self.cache_dir, exist_ok=True)
+
+        # Full path to store the model
+        self.model_path = os.path.join(self.cache_dir, model_path)
+
+        # Google Drive backup URL for model download
+        self.drive_url = "https://drive.google.com/uc?export=download&id=1JY2WJ0QdeOEUdmByj7V0Xrn4FPX5FKAz"
+
+        # Ensure model is available
+        if not os.path.exists(self.model_path):
+            print("🌐 Model not found locally. Downloading from Google Drive...")
+            try:
+                response = requests.get(self.drive_url, stream=True)
+                response.raise_for_status()
+                with open(self.model_path, "wb") as f:
+                    for chunk in response.iter_content(chunk_size=8192):
+                        f.write(chunk)
+                print("✅ Model downloaded and saved locally.")
+            except Exception as e:
+                print(f"❌ Failed to download model: {e}")
+                self.model_path = None
+
+        # Load model if available
+        if self.model_path and os.path.exists(self.model_path):
+            self.model = self._load_model()
+        else:
+            self.model = None
+            print("⚠️ No model available — running in mock mode.")
+
+        # Prepare transformations
         self.transform = self._get_transforms()
 
     def _download_model_from_drive(self, url):
         """Downloads model weights from Google Drive if not available locally."""
-        print("🌐 Downloading model from Google Drive...")
+        print("🌐 Downloading model from Google Drive (direct)...")
         response = requests.get(url)
         response.raise_for_status()
         model_data = BytesIO(response.content)
@@ -43,8 +74,8 @@ class WasteClassifier:
         """Loads model locally or from cloud depending on environment."""
         try:
             # Check if running on Render
-            if os.getenv("RENDER", "false") == "true":
-                MODEL_URL = "https://drive.google.com/uc?export=download&id=1JY2WJ0QdeOEUdmByj7V0Xrn4FPX5FKAz"
+            if os.getenv("RENDER", "false") == "true" and not os.path.exists(self.model_path):
+                MODEL_URL = self.drive_url
                 return self._download_model_from_drive(MODEL_URL)
             else:
                 print(f"📂 Loading local model from {self.model_path}")
