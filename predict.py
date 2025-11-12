@@ -20,8 +20,8 @@ class WasteClassifier:
 
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-        # Define a cache directory (works for Render persistent disk)
-        self.cache_dir = "/opt/render/project/src/model_cache"
+        # ✅ Use /tmp directory instead of /opt — works on Render free tier
+        self.cache_dir = "/tmp/model_cache"
         os.makedirs(self.cache_dir, exist_ok=True)
 
         # Full path to store the model
