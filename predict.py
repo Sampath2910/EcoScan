@@ -63,7 +63,7 @@ class WasteClassifier:
         model = models.resnet18(pretrained=False)
         num_ftrs = model.fc.in_features
         model.fc = nn.Linear(num_ftrs, len(self.class_names))
-        state_dict = torch.load(model_data, map_location=self.device)
+        state_dict = torch.load(self.model_path, map_location=self.device, weights_only=False)
         model.load_state_dict(state_dict)
         model.to(self.device)
         model.eval()
