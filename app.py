@@ -46,19 +46,13 @@ app.config['UPLOAD_FOLDER'] = os.path.join(root_dir, UPLOAD_FOLDER)
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 # --- GLOBAL ML MODEL INITIALIZATION ---
-CLASSIFIER = None
-MODEL_PATH = os.path.join(root_dir, 'waste_classifier.pt') 
-
+# ✅ Always initialize the classifier (it will handle /tmp model caching internally)
 try:
-    if os.path.exists(MODEL_PATH):
-        # Initialize the model once globally
-        CLASSIFIER = WasteClassifier(model_path=MODEL_PATH)
-        print("✅ PyTorch Model (ResNet18) loaded successfully.")
-    else:
-        print(f"❌ ERROR: Model file not found at {MODEL_PATH}. Running with Mock Data fallback.")
+    CLASSIFIER = WasteClassifier()
+    print("✅ WasteClassifier initialized successfully.")
 except Exception as e:
-    # This will now catch the specific 'Failed to load model weights' error from predict.py
-    print(f"❌ ERROR: Unexpected error loading ML Model: {e}. Running with Mock Data fallback.")
+    print(f"❌ ERROR: Failed to initialize WasteClassifier: {e}")
+    CLASSIFIER = None
 
 # --- MOCK DATA STRUCTURES (UPDATED for detailed user/reclaimer fields) ---
 """USERS = {
