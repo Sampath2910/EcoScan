@@ -28,7 +28,8 @@ class WasteClassifier:
         self.model_path = os.path.join(self.cache_dir, model_path)
 
         # Google Drive backup URL for model download
-        self.drive_url = "https://drive.google.com/uc?export=download&id=1JY2WJ0QdeOEUdmByj7V0Xrn4FPX5FKAz"
+        self.drive_url = "https://github.com/Sampath2910/EcoScan/releases/download/ecoscan-v1/waste_classifier.pth"
+
 
         # Ensure model is available
         if not os.path.exists(self.model_path):
