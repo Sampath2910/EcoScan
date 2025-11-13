@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: ecoscan
+    env: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app --workers=1 --threads=1 --timeout=200"
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10
