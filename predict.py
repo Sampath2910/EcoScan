@@ -37,6 +37,8 @@ class WasteClassifier:
                 print("❌ Model download failed — using mock mode.")
                 self.model = None
                 return
+            
+        # UTF-8 fixed
 
         # Load the model
         self.model = self._load_model()
