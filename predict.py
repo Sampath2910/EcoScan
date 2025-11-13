@@ -28,7 +28,7 @@ class WasteClassifier:
         self.model_path = os.path.join(self.cache_dir, model_path)
 
         # HuggingFace model file URL (direct download)
-        self.model_url = "https://huggingface.co/Sampath2910/EcoScan-Classifier/resolve/main/waste_classifier.pth"
+        self.model_url = "https://huggingface.co/Sampath2910/EcoScan-Classifier/resolve/main/waste_classifier.pth?download=true"
 
         # Ensure the model is present locally
         if not os.path.exists(self.model_path):
