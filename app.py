@@ -34,6 +34,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize the DB
 models_db.init_app(app)
+with app.app_context():
+    models_db.create_all()
+    print("✅ Database tables created on Render")
+
 migrate = Migrate(app, models_db)
 
 
