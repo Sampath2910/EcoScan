@@ -657,7 +657,6 @@ def upload_file():
         suggestions = json.dumps(result.get('suggestions', []))
         description = f"{label} waste detected. {'Recyclable' if is_recyclable else 'Non-recyclable'}."
 
-                # Store upload in database
         # Store upload in database
         if not os.path.exists(app.config['UPLOAD_FOLDER']):
             os.makedirs(app.config['UPLOAD_FOLDER'])

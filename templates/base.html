@@ -14,7 +14,8 @@
     {% block head_links %}
     {% endblock %}
 </head>
-<body class="bg-gray-100 text-text-dark">
+<body class="bg-gray-100 text-text-dark {% block body_class %}{% endblock %}">
+
 
     <header class="bg-white shadow-md">
         <div class="navbar max-w-6xl mx-auto p-4">

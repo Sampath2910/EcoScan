@@ -39,7 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const iconPath = isRecyclable 
         ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />'
         : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />';
-    const resultText = isRecyclable ? 'Recyclable' : 'Trash';
+    const resultText = isRecyclable ? 'Recyclable' : 'Non-Recyclable';
+
 
     container.innerHTML = `
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
@@ -49,8 +50,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     onerror="this.onerror=null;this.src='{{ url_for('static', filename='uploads/placeholder.jpg') }}';"
                     class="w-full h-auto max-h-96 object-contain rounded-lg shadow-xl border-2 border-gray-200">
                 <p class="text-sm text-gray-500 text-center pt-2">
-                    Image processed at {{ current_year }} - {{ username }}
+                    Image processed at {{ current_year }} - {{ session['username'] }}
                 </p>
+
             </div>
 
             <div class="space-y-6">
@@ -69,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="p-4 bg-indigo-50 rounded-lg shadow-inner border border-indigo-200">
                         <p class="text-sm font-medium text-indigo-700">Model Confidence</p>
-                        <p class="text-xl font-bold text-indigo-800">${data.classification_details.confidence_score || 'N/A'}</p>
+                        <p class="text-xl font-bold text-indigo-800">${data.classification_details[0]?.probability ? (data.classification_details[0].probability * 100).toFixed(2) + '%' : 'N/A'}</p>
                     </div>
                 </div>
 
@@ -109,14 +111,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const response = await fetch('/save_description', {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({upload_id: data.upload_id, description: desc})
+            headers: { 'Content-Type': 'application/json' },
+            credentials: "include", // REQUIRED!
+            body: JSON.stringify({
+                upload_id: data.upload_id,
+                description: desc
+            })
         });
 
         const resData = await response.json();
         document.getElementById('desc-status').textContent = resData.message || 'Saved!';
         document.getElementById('desc-status').classList.add('text-green-600');
     });
+
 });
 </script>
 

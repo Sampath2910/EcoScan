@@ -384,3 +384,14 @@ footer {
     object-fit: cover;
     background-color: #fff
 }
+
+/* LOGIN PAGE CLEAN BACKGROUND FIX */
+.login-page {
+    background: #f3f4f6 !important;
+    background-image: none !important;
+}
+
+.login-page .hero,
+.login-page .home-header-image {
+    display: none !important;
+}

@@ -132,7 +132,9 @@
             fetch('{{ url_for("upload_file") }}', { 
                 method: 'POST',
                 body: formData,
-            })
+                credentials: "include"   // Include cookies for session management
+})
+
             .then(response => {
                 // If unauthorized (e.g., session expired), redirect to login
                 if (response.status === 401) {
