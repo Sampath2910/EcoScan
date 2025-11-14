@@ -7,87 +7,104 @@ import os
 import torch.nn as nn
 import requests
 
+
 class WasteClassifier:
     """
-    Optimized Waste Classifier with:
+    Optimized Waste Classifier:
     - Lazy model loading (fixes Render timeout)
-    - TorchScript support (faster, lower memory)
-    - Automatic download fallback for .pth
+    - TorchScript support (fast, small, CPU friendly)
+    - Safe fallback .pth load & convert
+    - NO downloads during predict()
     """
 
-    def __init__(self, model_path='waste_classifier_ts.pt'):
+    def __init__(self, model_path='waste_classifier_scripted.pt'):
         self.class_names = ['cardboard', 'glass', 'metal', 'paper', 'plastic', 'trash']
         self.recyclable_classes = ['cardboard', 'glass', 'metal', 'paper', 'plastic']
 
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        # Render = CPU only
+        self.device = torch.device("cpu")
 
-        # Cache directory on Render
+        # Cache folder
         self.cache_dir = "/tmp/model_cache"
         os.makedirs(self.cache_dir, exist_ok=True)
 
-        # Paths for TorchScript + fallback .pth
+        # Local model paths
         self.model_path = os.path.join(self.cache_dir, model_path)
-        self.fallback_pth_path = os.path.join(self.cache_dir, "waste_classifier.pth")
+        self.fallback_pth_path = os.path.join(self.cache_dir, "waste_classifier_optimized.pth")
 
-        # HuggingFace model (.pth)
-        self.model_url = "https://huggingface.co/Sampath2910/EcoScan-Classifier/resolve/main/waste_classifier.pth?download=true"
+        # -----------------------
+        # 🔥 USE YOUR NEW URLs
+        # -----------------------
+        self.ts_url = (
+            "https://huggingface.co/Sampath2910/EcoScan-Classifier/resolve/main/waste_classifier_scripted.pt?download=true"
+        )
 
-        # Start with model unloaded → Lazy loading
-        self.model = None  
+        self.pth_url = (
+            "https://huggingface.co/Sampath2910/EcoScan-Classifier/resolve/main/waste_classifier_optimized.pth?download=true"
+        )
 
-        # Preload transforms immediately
+        # Lazy-loaded model
+        self.model = None
+
+        # Load transforms immediately
         self.transform = self._get_transforms()
 
         print("🔄 WasteClassifier initialized (lazy loading mode).")
 
-    # -------------------------------------------------------------------
-    # DOWNLOAD MODEL FILE (.pth)
-    # -------------------------------------------------------------------
-    def _download_model_file(self):
-        try:
-            print("🌐 Downloading model (.pth) from HuggingFace...")
-            response = requests.get(self.model_url, stream=True, timeout=90)
-            response.raise_for_status()
+    # -----------------------------------------------------------
+    # DOWNLOAD FILE SAFELY (ONLY IF MISSING)
+    # -----------------------------------------------------------
+    def _download_if_missing(self, url, path):
+        if os.path.exists(path):
+            return True
 
-            with open(self.fallback_pth_path, "wb") as f:
-                for chunk in response.iter_content(chunk_size=8192):
+        try:
+            print(f"🌐 Downloading model from: {url}")
+            r = requests.get(url, stream=True, timeout=60)
+            r.raise_for_status()
+
+            with open(path, "wb") as f:
+                for chunk in r.iter_content(chunk_size=8192):
                     f.write(chunk)
 
-            print("✅ Downloaded .pth model:", self.fallback_pth_path)
+            print("✅ Downloaded:", path)
             return True
+
         except Exception as e:
-            print("❌ Model download failed:", e)
+            print("❌ Download failed:", e)
             return False
 
-    # -------------------------------------------------------------------
-    # LOAD TORCHSCRIPT MODEL IF AVAILABLE (FAST)
-    # -------------------------------------------------------------------
+    # -----------------------------------------------------------
+    # LOAD TORCHSCRIPT (FASTEST)
+    # -----------------------------------------------------------
     def _load_torchscript(self):
         try:
-            if os.path.exists(self.model_path):
-                print("📂 Loading TorchScript model from:", self.model_path)
-                model = torch.jit.load(self.model_path, map_location=self.device)
-                model.eval()
-                print("✅ TorchScript model loaded successfully!")
-                return model
-            return None
+            self._download_if_missing(self.ts_url, self.model_path)
+
+            if not os.path.exists(self.model_path):
+                return None
+
+            print("📂 Loading TorchScript:", self.model_path)
+            model = torch.jit.load(self.model_path, map_location=self.device)
+            model.eval()
+            print("✅ TorchScript model loaded.")
+            return model
+
         except Exception as e:
             print("⚠️ TorchScript load failed:", e)
             return None
 
-    # -------------------------------------------------------------------
-    # LOAD FALLBACK .PTH → Convert → Load
-    # -------------------------------------------------------------------
+    # -----------------------------------------------------------
+    # LOAD .PTH → QUANTIZE → TORCHSCRIPT CONVERT
+    # -----------------------------------------------------------
     def _load_and_convert_pth(self):
         try:
             if not os.path.exists(self.fallback_pth_path):
-                # Download if not present
-                if not self._download_model_file():
+                if not self._download_if_missing(self.pth_url, self.fallback_pth_path):
                     return None
 
-            print("📦 Loading .pth model for conversion:", self.fallback_pth_path)
+            print("📦 Loading .pth model:", self.fallback_pth_path)
 
-            # Load ResNet18
             model = models.resnet18(weights=None)
             num_ftrs = model.fc.in_features
             model.fc = nn.Linear(num_ftrs, len(self.class_names))
@@ -96,94 +113,94 @@ class WasteClassifier:
             model.load_state_dict(state_dict)
             model.eval()
 
-            # Quantize to reduce size & RAM
+            # Quantization step
             model = torch.quantization.quantize_dynamic(model, {nn.Linear}, dtype=torch.qint8)
 
-            # Convert to TorchScript
+            # Convert → TorchScript
             example = torch.randn(1, 3, 224, 224)
             traced = torch.jit.trace(model, example)
 
             traced.save(self.model_path)
-            print("✅ Converted and saved TorchScript model:", self.model_path)
+            print("✅ Converted → TorchScript saved:", self.model_path)
 
             return traced
 
         except Exception as e:
-            print("❌ Failed loading/converting .pth:", e)
+            print("❌ .pth conversion failed:", e)
             return None
 
-    # -------------------------------------------------------------------
-    # LAZY LOAD MODEL (only at first prediction)
-    # -------------------------------------------------------------------
+    # -----------------------------------------------------------
+    # LAZY LOAD (first prediction only)
+    # -----------------------------------------------------------
     def _ensure_model_loaded(self):
         if self.model is not None:
-            return  # Already loaded
+            return
 
-        print("⏳ Lazy-loading model on demand...")
+        print("⏳ Lazy-loading model...")
 
-        # 1. Try loading fast TorchScript version
+        # Try TorchScript first
         self.model = self._load_torchscript()
         if self.model:
             return
 
-        # 2. If not present → load/convert .pth
+        # Otherwise try .pth
         self.model = self._load_and_convert_pth()
         if self.model:
             return
 
-        print("❌ FATAL: No model could be loaded.")
+        print("❌ No model could be loaded.")
         self.model = None
 
-    # -------------------------------------------------------------------
+    # -----------------------------------------------------------
     # TRANSFORMS
-    # -------------------------------------------------------------------
+    # -----------------------------------------------------------
     def _get_transforms(self):
         return transforms.Compose([
             transforms.Resize(256),
             transforms.CenterCrop(224),
             transforms.ToTensor(),
-            transforms.Normalize([0.485, 0.456, 0.406],
-                                 [0.229, 0.224, 0.225])
+            transforms.Normalize(
+                [0.485, 0.456, 0.406],
+                [0.229, 0.224, 0.225]
+            )
         ])
 
-    # -------------------------------------------------------------------
-    # CLASSIFY IMAGE
-    # -------------------------------------------------------------------
+    # -----------------------------------------------------------
+    # PREDICT
+    # -----------------------------------------------------------
     def predict(self, image_path, topk=1):
 
-        # Lazy model load (critical)
         self._ensure_model_loaded()
 
-        # If still not loaded → use mock fallback
         if self.model is None:
-            print("⚠️ Model unavailable → Returning mock result.")
+            print("⚠️ Model unavailable → mock fallback.")
             return {
-                "error": "Model unavailable (fallback).",
+                "error": "Model unavailable",
                 "prediction": "trash",
-                "confidence": 0.0,
                 "label": "trash",
-                "is_recyclable": False,
+                "confidence": 0.0,
+                "is_recyclable": False
             }, []
 
         try:
             if not os.path.exists(image_path):
                 return {"error": "Image not found"}, []
 
-            image = Image.open(image_path).convert("RGB")
-            input_tensor = self.transform(image).unsqueeze(0).to(self.device)
+            img = Image.open(image_path).convert("RGB")
+            tensor = self.transform(img).unsqueeze(0).to(self.device)
 
             with torch.no_grad():
-                outputs = self.model(input_tensor)
+                outputs = self.model(tensor)
                 probs = torch.nn.functional.softmax(outputs, dim=1)
 
-            top_probs, top_indices = torch.topk(probs, topk)
-            idx = top_indices[0][0].item()
+            top_probs, top_idx = torch.topk(probs, topk)
+            idx = top_idx[0][0].item()
             label = self.class_names[idx]
 
             result = {
                 "prediction": label,
-                "confidence": float(top_probs[0][0].item() * 100),
                 "label": label,
+                "confidence": float(top_probs[0][0].item() * 100),
                 "is_recyclable": label.lower() in self.recyclable_classes
             }
 
@@ -192,11 +209,11 @@ class WasteClassifier:
                     "label": self.class_names[i.item()],
                     "probability": float(p.item())
                 }
-                for i, p in zip(top_indices[0], top_probs[0])
+                for i, p in zip(top_idx[0], top_probs[0])
             ]
 
             return result, details
 
         except Exception as e:
-            print("❌ Classification error:", e)
+            print("❌ Prediction error:", e)
             return {"error": str(e)}, []
