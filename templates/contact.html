@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us - PeerConnect{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto mt-12 mb-16 bg-white shadow-xl rounded-2xl p-8">
+    
+    <!-- Header -->
+    <h1 class="text-3xl font-bold text-center text-gray-800 mb-2">
+        Get in Touch
+    </h1>
+    <p class="text-center text-gray-500 mb-6">
+        We'd love to hear your feedback on PeerConnect!
+    </p>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="mb-4">
+        {% for category, message in messages %}
+        <div class="p-3 mb-2 rounded-lg text-white 
+             {% if category == 'success' %}
+                bg-green-600 
+             {% else %}
+                bg-red-500
+             {% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Contact Form -->
+    <form method="POST" action="{{ url_for('contact') }}" class="space-y-5">
+
+        <!-- Name -->
+        <div>
+            <label for="name" class="block font-semibold text-gray-700 mb-1">
+                Name
+            </label>
+            <input 
+                type="text" 
+                id="name" 
+                name="name" 
+                required
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter your full name"
+            >
+        </div>
+
+        <!-- Email -->
+        <div>
+            <label for="email" class="block font-semibold text-gray-700 mb-1">
+                Email
+            </label>
+            <input 
+                type="email" 
+                id="email" 
+                name="email" 
+                required
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter your email address"
+            >
+        </div>
+
+        <!-- Message -->
+        <div>
+            <label for="message" class="block font-semibold text-gray-700 mb-1">
+                Message
+            </label>
+            <textarea 
+                id="message" 
+                name="message" 
+                rows="5" 
+                required
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Type your message here..."
+            ></textarea>
+        </div>
+
+        <!-- Submit -->
+        <button 
+            type="submit"
+            class="w-full bg-blue-600 text-white py-3 rounded-lg text-lg font-semibold shadow-md hover:bg-blue-700 transition-all">
+            Send Message
+        </button>
+
+    </form>
+</div>
+{% endblock %}
