@@ -34,9 +34,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize the DB
 models_db.init_app(app)
-with app.app_context():
-    models_db.create_all()
-    print("✅ Database tables created on Render")
 
 migrate = Migrate(app, models_db)
 
@@ -49,14 +46,16 @@ os.makedirs(os.path.join(root_dir, UPLOAD_FOLDER), exist_ok=True)
 app.config['UPLOAD_FOLDER'] = os.path.join(root_dir, UPLOAD_FOLDER) 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
-# --- GLOBAL ML MODEL INITIALIZATION ---
-# ✅ Always initialize the classifier (it will handle /tmp model caching internally)
+print("\n🚀 Pre-loading ML Model... (please wait)")
+
 try:
     CLASSIFIER = WasteClassifier()
-    print("✅ WasteClassifier initialized successfully.")
+    CLASSIFIER._ensure_model_loaded()      # <<< IMPORTANT: force model load at startup
+    print("✅ ML model fully ready and loaded!\n")
 except Exception as e:
     print(f"❌ ERROR: Failed to initialize WasteClassifier: {e}")
     CLASSIFIER = None
+
 
 # --- MOCK DATA STRUCTURES (UPDATED for detailed user/reclaimer fields) ---
 """USERS = {
