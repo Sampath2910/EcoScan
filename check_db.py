@@ -1,10 +1,10 @@
 import sqlite3
 
 # connect to your database
-conn = sqlite3.connect('eco_scan.db')
+conn = sqlite3.connect('instance/ecoscan.db')   # <-- updated path
 cursor = conn.cursor()
 
-print("\n=== Tables in eco_scan.db ===")
+print("\n=== Tables in ecoscan.db ===")
 cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
 tables = cursor.fetchall()
 for t in tables:
