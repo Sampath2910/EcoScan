@@ -395,3 +395,20 @@ footer {
 .login-page .home-header-image {
     display: none !important;
 }
+
+/* Force hero image scaling */
+.hero-new .image-content img,
+.image-content img,
+.hero-image img {
+    max-width: 420px !important;
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+    margin: 0 auto !important;
+    object-fit: contain !important;
+}
+
+body {
+    overflow-x: hidden !important;
+}
+
