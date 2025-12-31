@@ -44,7 +44,6 @@ with app.app_context():
     except Exception as db_err:
         print("❌ Failed to create database tables:", db_err)
 
-
 # Set configuration variables
 app.secret_key = 'super_secret_dev_key_change_in_prod'
 UPLOAD_FOLDER = 'static/uploads/temp'
