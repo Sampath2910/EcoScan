@@ -4,17 +4,10 @@
 
 {% block content %}
 <div class="max-w-4xl mx-auto px-4 py-10">
-    <div id="results-container" class="bg-white p-8 md:p-10 shadow-2xl rounded-xl border border-gray-100 transform transition-all duration-300">
+    <div id="results-container" class="bg-white p-8 md:p-10 shadow-2xl rounded-xl border border-gray-100">
         <h1 class="text-4xl font-extrabold text-gray-800 text-center mb-8">
             Your Scan Results
         </h1>
-    </div>
-
-    <div class="text-center mt-8">
-        <a href="{{ url_for('upload_file') }}" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-lg text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m3.987 8.28c-1.802-1.127-2.91-3.165-2.91-5.32c0-4.418 3.582-8 8-8s8 3.582 8 8-3.582 8-8 8zM12 11V5"></path></svg>
-            Scan Another Item
-        </a>
     </div>
 </div>
 
@@ -22,13 +15,14 @@
 document.addEventListener('DOMContentLoaded', () => {
     const resultsJsonString = document.getElementById('prediction-data-script').textContent;
     let data;
+
     try {
         data = JSON.parse(resultsJsonString);
     } catch (e) {
         document.getElementById('results-container').innerHTML = `
             <div class="text-center text-red-600 p-6">
                 <h2 class="text-3xl font-bold mb-4">Data Error</h2>
-                <p>Could not load the classification results. Please try scanning again.</p>
+                <p>Could not load the classification results.</p>
             </div>`;
         return;
     }
@@ -36,83 +30,83 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('results-container');
     const isRecyclable = data.recyclable;
     const resultClass = isRecyclable ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50';
-    const iconPath = isRecyclable 
-        ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />'
-        : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />';
     const resultText = isRecyclable ? 'Recyclable' : 'Non-Recyclable';
 
-
     container.innerHTML = `
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-            <div class="space-y-4">
-                <h3 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">Scanned Item</h3>
-                <img src="${data.image_url}" alt="Uploaded waste item"
-                    onerror="this.onerror=null;this.src='{{ url_for('static', filename='uploads/placeholder.jpg') }}';"
-                    class="w-full h-auto max-h-96 object-contain rounded-lg shadow-xl border-2 border-gray-200">
-                <p class="text-sm text-gray-500 text-center pt-2">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- LEFT -->
+            <div>
+                <h3 class="text-xl font-semibold mb-3">Scanned Item</h3>
+                <img src="${data.image_url}"
+                     class="w-full max-h-96 object-contain rounded-lg shadow border">
+                <p class="text-sm text-gray-500 text-center mt-2">
                     Image processed at {{ current_year }} - {{ session['username'] }}
                 </p>
-
             </div>
 
+            <!-- RIGHT -->
             <div class="space-y-6">
-                <div class="p-4 ${resultClass} rounded-xl flex items-center justify-between shadow-md">
-                    <div class="flex items-center">
-                        <svg class="w-8 h-8 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">${iconPath}</svg>
-                        <span class="text-2xl font-bold">${resultText}</span>
-                    </div>
-                    <span class="text-4xl font-extrabold text-gray-800">${data.material_label}</span>
+                <div class="p-4 ${resultClass} rounded-xl shadow">
+                    <span class="text-2xl font-bold">${resultText}</span>
+                    <span class="block text-4xl font-extrabold text-gray-800">
+                        ${data.material_label}
+                    </span>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="p-4 bg-yellow-50 rounded-lg shadow-inner border border-yellow-200">
-                        <p class="text-sm font-medium text-yellow-700">Points Earned</p>
-                        <p class="text-2xl font-bold text-yellow-800">${data.points_earned} pts</p>
+                    <div class="p-4 bg-yellow-50 rounded">
+                        <p class="text-sm">Points Earned</p>
+                        <p class="text-2xl font-bold">${data.points_earned} pts</p>
                     </div>
-                    <div class="p-4 bg-indigo-50 rounded-lg shadow-inner border border-indigo-200">
-                        <p class="text-sm font-medium text-indigo-700">Model Confidence</p>
-                        <p class="text-xl font-bold text-indigo-800">${data.classification_details[0]?.probability ? (data.classification_details[0].probability * 100).toFixed(2) + '%' : 'N/A'}</p>
+                    <div class="p-4 bg-indigo-50 rounded">
+                        <p class="text-sm">Model Confidence</p>
+                        <p class="text-xl font-bold">
+                            ${data.classification_details[0]?.probability
+                                ? (data.classification_details[0].probability * 100).toFixed(2) + '%'
+                                : 'N/A'}
+                        </p>
                     </div>
                 </div>
 
-                <div class="border-t pt-4">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-3 flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        Recycling Guidance
-                    </h3>
-                    <ul class="list-disc list-inside space-y-2 text-gray-600">
-                        ${data.suggestions.map(s => `<li class="text-base">${s}</li>`).join('')}
+                <div>
+                    <h3 class="text-xl font-semibold mb-2">Recycling Guidance</h3>
+                    <ul class="list-disc list-inside text-gray-600">
+                        ${data.suggestions.map(s => `<li>${s}</li>`).join('')}
                     </ul>
                 </div>
 
-                <!-- 🟢 NEW: Description form -->
-                <div class="mt-6 border-t pt-4">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-3">Add Description</h3>
+                <!-- ADD DESCRIPTION -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-2">Add Description</h3>
                     <form id="description-form">
-                        <textarea id="description" name="description" rows="3" placeholder="Describe the waste item (e.g., glass bottle, brand label, condition)..."
-                            class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:outline-none"></textarea>
+                        <textarea id="description"
+                                  rows="3"
+                                  class="w-full border rounded p-3"
+                                  placeholder="Describe the waste item..."></textarea>
+
                         <button type="submit"
-                            class="mt-3 px-5 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold shadow-md">
+                                class="mt-3 px-5 py-2 bg-green-600 text-white rounded font-semibold">
                             Save Description
                         </button>
                     </form>
-                    <p id="desc-status" class="text-sm mt-2 text-gray-500"></p>
+
+                    <p id="desc-status" class="text-sm mt-2 text-green-600"></p>
                 </div>
             </div>
         </div>
-        ${data.error ? `<div class="mt-6 p-4 bg-orange-100 border-l-4 border-orange-500 text-orange-700 rounded-lg"><p class="font-bold">Warning:</p><p>${data.error}</p></div>` : ''}
     `;
 
-    // 🟢 Handle Description Form Submit
+    // ✅ SAVE + REDIRECT
     document.getElementById('description-form').addEventListener('submit', async (e) => {
         e.preventDefault();
+
         const desc = document.getElementById('description').value.trim();
         if (!desc) return;
 
         const response = await fetch('/save_description', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            credentials: "include", // REQUIRED!
+            credentials: 'include',
             body: JSON.stringify({
                 upload_id: data.upload_id,
                 description: desc
@@ -120,14 +114,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const resData = await response.json();
-        document.getElementById('desc-status').textContent = resData.message || 'Saved!';
-        document.getElementById('desc-status').classList.add('text-green-600');
-    });
+        document.getElementById('desc-status').textContent = resData.message || 'Saved';
 
+        // 🔥 REDIRECT TO UPLOAD PAGE
+        setTimeout(() => {
+            window.location.href = "{{ url_for('upload_file') }}";
+        }, 800);
+    });
 });
 </script>
 
 <script id="prediction-data-script" type="application/json">
-    {{ prediction_data_json | safe }}
+{{ prediction_data_json | safe }}
 </script>
 {% endblock %}

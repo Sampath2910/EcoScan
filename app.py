@@ -74,12 +74,69 @@ except Exception as e:
     }
 }"""
 MOCK_RECYCLERS = [
-    {"id": 1, "name": "Green City Recycling", "type": "Plastic", "city": "Mumbai", "lat": 19.0760, "lng": 72.8777},
-    {"id": 2, "name": "Metal Scraps Inc.", "type": "Metal", "city": "Delhi", "lat": 28.7041, "lng": 77.1025},
-    {"id": 3, "name": "Paper Pulp Co.", "type": "Paper", "city": "Bangalore", "lat": 12.9716, "lng": 77.5946},
-    {"id": 4, "name": "Glass Rebirth", "type": "Glass", "city": "Kolkata", "lat": 22.5726, "lng": 88.3639},
-    {"id": 5, "name": "Trash Disposal Ltd.", "type": "Trash", "city": "Chennai", "lat": 13.0827, "lng": 80.2707},
+    {
+        "id": 1,
+        "name": "Hyderabad Municipal Recycling Center",
+        "type": "Plastic",
+        "city": "Hyderabad",
+        "lat": 17.3850,
+        "lng": 78.4867
+    },
+    {
+        "id": 2,
+        "name": "Green Earth Recyclers",
+        "type": "Paper",
+        "city": "Secunderabad",
+        "lat": 17.4399,
+        "lng": 78.4983
+    },
+    {
+        "id": 3,
+        "name": "EcoMetal Industries",
+        "type": "Metal",
+        "city": "Gachibowli",
+        "lat": 17.4401,
+        "lng": 78.3489
+    },
+    {
+        "id": 4,
+        "name": "GlassCycle Telangana",
+        "type": "Glass",
+        "city": "Miyapur",
+        "lat": 17.4948,
+        "lng": 78.3996
+    },
+    {
+        "id": 5,
+        "name": "Zero Waste Processing Unit",
+        "type": "Plastic",
+        "city": "Kukatpally",
+        "lat": 17.4849,
+        "lng": 78.4138
+    }
 ]
+
+ALL_RECYCLERS = [
+    # Hyderabad & nearby
+    {"id": 1, "name": "Hyderabad Municipal Recycling Center", "type": "Plastic", "city": "Hyderabad", "lat": 17.3850, "lng": 78.4867},
+    {"id": 2, "name": "Green Earth Paper Recyclers", "type": "Paper", "city": "Secunderabad", "lat": 17.4399, "lng": 78.4983},
+    {"id": 3, "name": "EcoMetal Industries", "type": "Metal", "city": "Gachibowli", "lat": 17.4401, "lng": 78.3489},
+    {"id": 4, "name": "GlassCycle Telangana", "type": "Glass", "city": "Miyapur", "lat": 17.4948, "lng": 78.3996},
+    {"id": 5, "name": "Zero Waste Plastic Recyclers", "type": "Plastic", "city": "Kukatpally", "lat": 17.4849, "lng": 78.4138},
+    {"id": 6, "name": "ReNew E-Waste Recycling", "type": "E-Waste", "city": "Banjara Hills", "lat": 17.4127, "lng": 78.4367},
+    {"id": 7, "name": "Metro Metal Scrap Traders", "type": "Metal", "city": "Chandanagar", "lat": 17.4435, "lng": 78.3528},
+    {"id": 8, "name": "PaperCycle Pvt Ltd", "type": "Paper", "city": "HITEC City", "lat": 17.4470, "lng": 78.3762},
+    {"id": 9, "name": "GlassSmart Solutions", "type": "Glass", "city": "Malkajgiri", "lat": 17.5103, "lng": 78.5593},
+    {"id": 10, "name": "Green Plast Recyclers", "type": "Plastic", "city": "Uppal", "lat": 17.3833, "lng": 78.5465},
+    {"id": 11, "name": "Secunderabad Metal Works", "type": "Metal", "city": "Secunderabad", "lat": 17.4399, "lng": 78.4983},
+    {"id": 12, "name": "EcoBins & Recycling Hub", "type": "Cardboard", "city": "Hyderabad", "lat": 17.3950, "lng": 78.4860},
+
+    # Other cities (only shown on search)
+    {"id": 13, "name": "Mumbai Plastic Works", "type": "Plastic", "city": "Mumbai", "lat": 19.0760, "lng": 72.8777},
+    {"id": 14, "name": "Delhi Metal Hub", "type": "Metal", "city": "Delhi", "lat": 28.7041, "lng": 77.1025},
+    {"id": 15, "name": "Bangalore Paper Recyclers", "type": "Paper", "city": "Bangalore", "lat": 12.9716, "lng": 77.5946},
+]
+
 # Base structure for dashboard uploads (uses relative paths instead of url_for)
 MOCK_UPLOADS_BASE = [
     {'image_path': 'uploads/sample_plastic.jpg', 'label': 'Plastic', 'is_recyclable': True, 'suggestions': ['Rinse container before disposal.', 'Find drop-off point.']},
@@ -425,8 +482,41 @@ def directory():
 
 @app.route('/directory_data')
 def directory_data():
-    # AJAX endpoint for directory.js
-    return jsonify(MOCK_RECYCLERS)
+    waste_type = request.args.get("type", "").lower()
+    city_filter = request.args.get("city", "").lower()
+
+    hyderabad_cities = [
+        "hyderabad",
+        "secunderabad",
+        "gachibowli",
+        "miyapur",
+        "kukatpally",
+        "uppal",
+        "banjara hills",
+        "hitec city",
+        "malkajgiri",
+        "chandanagar"
+    ]
+
+    # No filters → show Hyderabad area only
+    if not waste_type and not city_filter:
+        return jsonify([
+            r for r in ALL_RECYCLERS
+            if r["city"].lower() in hyderabad_cities
+        ])
+
+    # Filters present → global search
+    filtered = []
+    for r in ALL_RECYCLERS:
+        if waste_type and waste_type not in r["type"].lower():
+            continue
+        if city_filter and city_filter not in r["city"].lower():
+            continue
+        filtered.append(r)
+
+    return jsonify(filtered)
+
+
 
 # --- NEW: Dedicated Results Route ---
 @app.route('/results')
@@ -468,6 +558,37 @@ def reclaimer_page():
         flash('Access denied. This portal is for Reclaimers only.', 'error')
         return redirect(url_for('index'))
     return render_template('reclaimers_page.html', uploads_to_process=MOCK_UPLOADS_TO_PROCESS)
+
+@app.route('/recycled-products')
+def recycled_products():
+    products = [
+        {
+            "image": "products/plastic_chair.jpg",
+            "company": "GreenPlast Pvt Ltd",
+            "waste_used": "1200 kg Plastic Waste",
+            "products": "Recycled Plastic Chairs & Tables"
+        },
+        {
+            "image": "products/paper_notebooks.jpg",
+            "company": "EcoPaper Industries",
+            "waste_used": "800 kg Paper Waste",
+            "products": "Notebooks, Cardboards"
+        },
+        {
+            "image": "products/glass_tiles.jpg",
+            "company": "GlassCycle Corp",
+            "waste_used": "600 kg Glass Waste",
+            "products": "Glass Tiles & Decorative Items"
+        },
+        {
+            "image": "products/metal_rods.jpg",
+            "company": "Metal Renew Ltd",
+            "waste_used": "1500 kg Metal Scrap",
+            "products": "Construction Rods & Sheets"
+        }
+    ]
+
+    return render_template("recycled_products.html", products=products)
 
 
 # =================================================================
@@ -621,6 +742,51 @@ def save_description():
         return jsonify({'success': True, 'message': 'Description saved successfully!'})
     else:
         return jsonify({'success': False, 'message': 'Upload not found.'}), 404
+    
+
+from models import RecyclerReview
+
+@app.route('/add_recycler_review', methods=['POST'])
+def add_recycler_review():
+    if 'user_id' not in session:
+        return jsonify({"success": False, "error": "Login required"}), 401
+
+    data = request.get_json()
+
+    review = RecyclerReview(
+        recycler_name=data['recycler_name'],
+        user_id=session['user_id'],
+        rating=int(data['rating']),
+        review=data.get('review', '')
+    )
+
+    models_db.session.add(review)
+    models_db.session.commit()
+
+    return jsonify({"success": True})
+
+@app.route('/get_recycler_reviews/<recycler_name>')
+def get_recycler_reviews(recycler_name):
+    reviews = RecyclerReview.query.filter_by(recycler_name=recycler_name).all()
+
+    result = []
+    for r in reviews:
+        result.append({
+            "username": r.user.username,
+            "rating": r.rating,
+            "review": r.review,
+            "created_at": r.created_at.strftime("%Y-%m-%d")
+        })
+
+    avg_rating = round(
+        sum(r.rating for r in reviews) / len(reviews), 1
+    ) if reviews else 0
+
+    return jsonify({
+        "average_rating": avg_rating,
+        "reviews": result
+    })
+
 
     
 @app.route('/upload_file', methods=['GET', 'POST'])

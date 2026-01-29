@@ -1,40 +1,51 @@
 <nav class="w-full bg-white shadow-md fixed top-0 left-0 z-50">
-    <div class="max-w-[100%] w-full flex justify-between items-center px-10 py-4">
+    <div class="w-full flex items-center px-10 py-4">
 
-        <!-- LOGO + TITLE -->
+        <!-- LEFT: LOGO + TITLE -->
         <div class="flex items-center space-x-3">
             <a href="{{ url_for('index') }}" class="flex items-center space-x-2">
-                <img src="{{ url_for('static', filename='uploads/peerconnect-logo.png') }}"
+                <img
+                    src="{{ url_for('static', filename='uploads/peerconnect-logo.png') }}"
                     alt="EcoScan Logo"
-                    class="h-10 w-auto object-contain">
-                <span class="text-2xl font-extrabold text-green-600">EcoScan</span>
+                    class="h-10 w-auto object-contain"
+                >
+                <span class="text-2xl font-extrabold text-green-600">
+                    EcoScan
+                </span>
             </a>
         </div>
 
-        <!-- HAMBURGER (Mobile) -->
-        <button class="lg:hidden text-gray-700 text-3xl focus:outline-none" id="menu-btn">
-            ☰
-        </button>
+        <!-- RIGHT: DESKTOP NAV -->
+        <ul class="hidden lg:flex items-center space-x-8 text-lg font-semibold text-gray-700 ml-auto">
 
-        <!-- DESKTOP NAV -->
-        <ul class="hidden lg:flex items-center space-x-10 text-lg font-semibold text-gray-700 ml-auto">
-            <li><a href="{{ url_for('index') }}" class="hover:text-green-600 transition">Home</a></li>
+            <li>
+                <a href="{{ url_for('index') }}" class="hover:text-green-600 transition">
+                    Home
+                </a>
+            </li>
 
             {% if user_is_authenticated %}
                 {% if user_role == 'user' %}
                     <li><a href="{{ url_for('upload_file') }}" class="hover:text-green-600 transition">Upload Waste</a></li>
                     <li><a href="{{ url_for('dashboard') }}" class="hover:text-green-600 transition">Dashboard</a></li>
                     <li><a href="{{ url_for('directory') }}" class="hover:text-green-600 transition">Recyclers</a></li>
+                    <li><a href="{{ url_for('recycled_products') }}" class="hover:text-green-600 transition">Recycled Products</a></li>
                 {% elif user_role == 'reclaimer' %}
-                    <li><a href="{{ url_for('reclaimer_page') }}" class="text-red-500 hover:text-red-600 font-bold">Reclaimer Portal</a></li>
+                    <li>
+                        <a href="{{ url_for('reclaimer_page') }}"
+                           class="text-red-500 hover:text-red-600 font-bold transition">
+                            Reclaimer Portal
+                        </a>
+                    </li>
                 {% endif %}
 
                 <li><a href="{{ url_for('about') }}" class="hover:text-green-600 transition">About</a></li>
                 <li><a href="{{ url_for('contact') }}" class="hover:text-green-600 transition">Contact</a></li>
 
-                <li class="ml-10"> <!-- 🔥 pushes logout to the far right -->
+                <!-- LOGOUT – FLUSH RIGHT -->
+                <li class="ml-10">
                     <a href="{{ url_for('logout') }}"
-                        class="bg-gray-200 hover:bg-gray-300 px-5 py-2 rounded-lg font-bold transition text-gray-700 whitespace-nowrap">
+                       class="bg-gray-200 hover:bg-gray-300 px-5 py-2 rounded-lg font-bold text-gray-700 transition whitespace-nowrap">
                         Logout ({{ username }})
                     </a>
                 </li>
@@ -44,28 +55,38 @@
                 <li><a href="{{ url_for('contact') }}" class="hover:text-green-600 transition">Contact</a></li>
                 <li class="ml-10">
                     <a href="{{ url_for('login') }}"
-                        class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg font-bold transition whitespace-nowrap">
+                       class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg font-bold transition whitespace-nowrap">
                         Login / Sign Up
                     </a>
                 </li>
             {% endif %}
         </ul>
+
+        <!-- HAMBURGER (MOBILE) -->
+        <button id="menu-btn" class="lg:hidden ml-auto text-3xl text-gray-700">
+            ☰
+        </button>
     </div>
 
     <!-- MOBILE MENU -->
     <div id="mobileMenu" class="lg:hidden hidden flex-col bg-white shadow-md text-gray-800 font-semibold text-lg space-y-4 px-6 py-4">
+
         <a href="{{ url_for('index') }}">Home</a>
+
         {% if user_is_authenticated %}
             {% if user_role == 'user' %}
                 <a href="{{ url_for('upload_file') }}">Upload Waste</a>
                 <a href="{{ url_for('dashboard') }}">Dashboard</a>
                 <a href="{{ url_for('directory') }}">Recyclers</a>
+                <a href="{{ url_for('recycled_products') }}">Recycled Products</a>
             {% elif user_role == 'reclaimer' %}
                 <a href="{{ url_for('reclaimer_page') }}" class="text-red-500 font-bold">Reclaimer Portal</a>
             {% endif %}
+
             <a href="{{ url_for('about') }}">About</a>
             <a href="{{ url_for('contact') }}">Contact</a>
             <a href="{{ url_for('logout') }}" class="text-red-600">Logout ({{ username }})</a>
+
         {% else %}
             <a href="{{ url_for('about') }}">About</a>
             <a href="{{ url_for('contact') }}">Contact</a>
@@ -73,6 +94,7 @@
         {% endif %}
     </div>
 
+    <!-- MOBILE TOGGLE SCRIPT -->
     <script>
         document.getElementById("menu-btn").addEventListener("click", () => {
             document.getElementById("mobileMenu").classList.toggle("hidden");

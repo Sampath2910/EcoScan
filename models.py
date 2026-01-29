@@ -82,3 +82,36 @@ class Contact(db.Model):
 
     def __repr__(self):
         return f"<Contact {self.name} ({self.email})>"
+    
+class RecycledProduct(db.Model):
+    __tablename__ = 'recycled_products'
+
+    id = db.Column(db.Integer, primary_key=True)
+    image = db.Column(db.String(300), nullable=False)
+    company = db.Column(db.String(150), nullable=False)
+    waste_used = db.Column(db.String(100), nullable=False)
+    products = db.Column(db.String(200), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<RecycledProduct {self.company}>"
+    
+class RecyclerReview(db.Model):
+    __tablename__ = 'recycler_reviews'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    recycler_name = db.Column(db.String(150), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    rating = db.Column(db.Integer, nullable=False)  # 1 to 5
+    review = db.Column(db.Text, nullable=True)
+
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship('User', backref='recycler_reviews')
+
+    def __repr__(self):
+        return f"<Review {self.recycler_name} ⭐{self.rating}>"
+
+

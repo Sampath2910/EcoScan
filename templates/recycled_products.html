@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Recycled Products | EcoScan{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-6 py-10">
+
+    <h1 class="text-4xl font-extrabold text-center text-green-600 mb-10">
+        Products Made from Recycled Waste
+    </h1>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+
+        {% for product in products %}
+        <div class="bg-white rounded-xl shadow-lg hover:shadow-2xl transition duration-300">
+
+            <img src="{{ url_for('static', filename=product.image) }}"
+                 alt="Recycled Product"
+                 class="w-full h-48 object-cover rounded-t-xl">
+
+            <div class="p-5 space-y-3">
+                <h2 class="text-xl font-bold text-gray-800">
+                    {{ product.company }}
+                </h2>
+
+                <p class="text-sm text-gray-600">
+                    <span class="font-semibold">Waste Used:</span>
+                    {{ product.waste_used }}
+                </p>
+
+                <p class="text-sm text-gray-600">
+                    <span class="font-semibold">Products:</span>
+                    {{ product.products }}
+                </p>
+            </div>
+
+        </div>
+        {% endfor %}
+
+    </div>
+
+</div>
+{% endblock %}

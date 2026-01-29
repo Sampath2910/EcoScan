@@ -1,87 +1,99 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("✅ DOM loaded, initializing Leaflet map...");
+    console.log("✅ Directory loaded");
 
-    const mapContainer = document.getElementById('map');
-    if (!mapContainer) {
-        console.error("❌ Map container not found!");
-        return;
-    }
+    // Default location → Hyderabad
+    const map = L.map('map').setView([17.3850, 78.4867], 11);
 
-    // Initialize the map
-    const map = L.map('map').setView([20.5937, 78.9629], 5);
-
-    // Add OpenStreetMap tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors',
     }).addTo(map);
 
-    console.log("✅ Leaflet map initialized successfully!");
-
-    let allRecyclers = [];
     let markers = [];
 
-    // Fetch data
+    // Load recyclers
     fetch('/directory_data')
         .then(res => res.json())
         .then(data => {
-            allRecyclers = data;
             renderRecyclers(data);
             addMarkers(data);
         })
         .catch(err => {
-            console.error("❌ Error fetching recyclers:", err);
+            console.error("❌ Failed to load recyclers:", err);
         });
 
+    // Render recycler list
     function renderRecyclers(data) {
         const list = document.getElementById('recyclerList');
         list.innerHTML = '';
-        if (data.length === 0) {
-            list.innerHTML = '<li class="p-3 text-gray-600">No recyclers found.</li>';
+
+        if (!data || data.length === 0) {
+            list.innerHTML =
+                '<li class="p-3 text-gray-600">No recyclers found.</li>';
             return;
         }
 
         data.forEach(r => {
             const li = document.createElement('li');
-            li.className = 'p-3 bg-white border rounded hover:bg-green-50 cursor-pointer';
+            li.className =
+                'p-3 bg-white border rounded hover:bg-green-50 cursor-pointer';
+
             li.innerHTML = `
                 <h3 class="font-semibold text-lg">${r.name}</h3>
-                <p class="text-sm text-gray-600 capitalize">Type: ${r.type}</p>
-                <p class="text-sm text-gray-600">City: ${r.city}</p>
+                <div class="mt-1 text-sm text-gray-600">
+                    <div><strong>Type:</strong> ${r.type}</div>
+                    <div><strong>City:</strong> ${r.city}</div>
+                </div>
             `;
-            li.onclick = () => {
-                map.setView([r.lat, r.lng], 12);
+
+            // Click → focus on map
+            li.addEventListener("click", () => {
+                if (!r.lat || !r.lng) return;
+
+                map.setView([r.lat, r.lng], 13);
                 L.popup()
                     .setLatLng([r.lat, r.lng])
-                    .setContent(`<b>${r.name}</b><br>${r.city}<br>Type: ${r.type}`)
+                    .setContent(`
+                        <b>${r.name}</b><br>
+                        ${r.city}<br>
+                        Type: ${r.type}
+                    `)
                     .openOn(map);
-            };
+            });
+
             list.appendChild(li);
         });
     }
 
+    // Add markers on map
     function addMarkers(data) {
         markers.forEach(m => map.removeLayer(m));
         markers = [];
 
         data.forEach(r => {
             if (!r.lat || !r.lng) return;
+
             const marker = L.marker([r.lat, r.lng]).addTo(map);
-            marker.bindPopup(`<b>${r.name}</b><br>${r.city}<br>Type: ${r.type}`);
+            marker.bindPopup(`
+                <b>${r.name}</b><br>
+                ${r.city}<br>
+                Type: ${r.type}
+            `);
+
             markers.push(marker);
         });
     }
 
+    // Filter recyclers
     window.filterRecyclers = function () {
-        const type = document.getElementById('filterType').value.toLowerCase();
-        const city = document.getElementById('filterCity').value.toLowerCase();
+        const type = document.getElementById("filterType").value;
+        const city = document.getElementById("filterCity").value;
 
-        const filtered = allRecyclers.filter(r => {
-            const matchesType = !type || r.type.toLowerCase() === type;
-            const matchesCity = !city || r.city.toLowerCase().includes(city);
-            return matchesType && matchesCity;
-        });
-
-        renderRecyclers(filtered);
-        addMarkers(filtered);
+        fetch(`/directory_data?type=${type}&city=${city}`)
+            .then(res => res.json())
+            .then(data => {
+                renderRecyclers(data);
+                addMarkers(data);
+            })
+            .catch(err => console.error("❌ Filter error:", err));
     };
 });
